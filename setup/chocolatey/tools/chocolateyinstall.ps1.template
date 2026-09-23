@@ -1,0 +1,27 @@
+﻿$ErrorActionPreference = 'Stop';
+
+$packageName= $env:ChocolateyPackageName
+$toolsDir = "$(Split-Path -parent $MyInvocation.MyCommand.Definition)"
+
+$url = 'https://github.com/windirstat/windirstat/releases/download/release/v${VERSION}/WinDirStat-x86.msi'
+$url64 = 'https://github.com/windirstat/windirstat/releases/download/release/v${VERSION}/WinDirStat-x64.msi'
+
+$packageArgs = @{
+  packageName   = $packageName
+  unzipLocation = $toolsDir
+  fileType      = 'msi'
+  url           = $url
+  url64bit      = $url64
+
+  softwareName  = 'WinDirStat'
+
+  checksum      = '${HASHX86}'
+  checksumType  = 'sha256'
+  checksum64    = '${HASHX64}'
+  checksumType64= 'sha256'
+
+  silentArgs    = "/qn /norestart /l*v `"$($env:TEMP)\$($packageName).$($env:chocolateyPackageVersion).MsiInstall.log`""
+  validExitCodes= @(0, 3010, 1641)
+}
+
+Install-ChocolateyPackage @packageArgs
